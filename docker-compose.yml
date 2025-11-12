@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+  # ----------------------------------------
+  # 1. Base de Datos (PostgreSQL)
+  # ----------------------------------------
+  moodle-db:
+    image: bitnami/postgresql:latest
+    container_name: moodle_db
+    restart: unless-stopped
+    environment:
+      # Estas variables son esenciales para la conexión de Moodle
+      - POSTGRESQL_USERNAME=bn_moodle
+      - POSTGRESQL_PASSWORD=12345 # ¡CAMBIA ESTO!
+      - POSTGRESQL_DATABASE=bitnami_moodle
+    volumes:
+      # Persistencia de datos: almacena los datos de la DB en el host
+      - ./data/postgresql:/bitnami/postgresql
+
+  # ----------------------------------------
+  # 2. Servidor Moodle (PHP/Apache)
+  # ----------------------------------------
+  moodle:
+    image: bitnami/moodle:latest
+    container_name: moodle_app
+    restart: unless-stopped
+    ports:
+      # Mapeo de puertos: Host:Contenedor
+      - "8080:8080"
+      - "8443:8443"
+    environment:
+      # Configuración de Moodle y conexión a la DB
+      - MOODLE_DATABASE_HOST=moodle-db
+      - MOODLE_DATABASE_PORT_NUMBER=5432
+      - MOODLE_DATABASE_USER=bn_moodle
+      - MOODLE_DATABASE_PASSWORD=12345 # ¡DEBE COINCIDIR!
+      - MOODLE_DATABASE_NAME=bitnami_moodle
+      # Opcional: Configuración del sitio
+      - MOODLE_HOST=localhost
+      - MOODLE_PASSWORD=12345 # ¡CAMBIA ESTO!
+    volumes:
+      # Persistencia de datos: almacena la configuración y archivos de Moodle
+      - ./data/moodle:/bitnami/moodle
