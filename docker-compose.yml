@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   mariadb:
-    image: bitnami/mariadb:latest
+    image: bitnami/mariadb:11.1
     container_name: moodle-mariadb
     restart: always
     environment:
@@ -10,28 +8,47 @@ services:
       - MARIADB_DATABASE=bitnami_moodle
       - MARIADB_USER=moodle_user
       - MARIADB_PASSWORD=moodle_pass
+      - MARIADB_CHARACTER_SET=utf8mb4
+      - MARIADB_COLLATE=utf8mb4_unicode_ci
     volumes:
       - mariadb_data:/bitnami/mariadb
+    networks:
+      - moodle_network
 
   moodle:
-    image: bitnami/moodle:latest
+    image: bitnami/moodle:4.3
     container_name: moodle-app
     ports:
-      - 8080:8080
-      - 8443:8443
+      - "8080:8080"
+      - "8443:8443"
     restart: always
     environment:
+      - MOODLE_DATABASE_TYPE=mariadb
       - MOODLE_DATABASE_HOST=mariadb
+      - MOODLE_DATABASE_PORT_NUMBER=3306
       - MOODLE_DATABASE_NAME=bitnami_moodle
       - MOODLE_DATABASE_USER=moodle_user
       - MOODLE_DATABASE_PASSWORD=moodle_pass
+      - MOODLE_USERNAME=admin
+      - MOODLE_PASSWORD=admin123
+      - MOODLE_EMAIL=admin@example.com
+      - MOODLE_SITE_NAME=Instituto Tecnológico de Mérida
     volumes:
       - moodle_data:/bitnami/moodle
-      - moodle_app:/bitnami/moodledata
+      - moodle_app_data:/bitnami/moodledata
     depends_on:
       - mariadb
+    networks:
+      - moodle_network
 
 volumes:
   mariadb_data:
+    driver: local
   moodle_data:
-  moodle_app:
+    driver: local
+  moodle_app_data:
+    driver: local
+
+networks:
+  moodle_network:
+    driver: bridge
