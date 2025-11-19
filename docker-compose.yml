@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   mariadb:
-    image: bitnami/mariadb:latest
+    image: bitnami/mariadb:11.4.2-debian-12-r0
     container_name: moodle-mariadb
     restart: always
     environment:
@@ -14,7 +14,7 @@ services:
       - mariadb_data:/bitnami/mariadb
 
   moodle:
-    image: bitnami/moodle:latest
+    image: bitnami/moodle:4-debian-12
     container_name: moodle-app
     ports:
       - 8080:8080
