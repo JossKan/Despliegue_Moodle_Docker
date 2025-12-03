@@ -28,6 +28,7 @@ services:
       - MOODLE_USERNAME=admin
       - MOODLE_PASSWORD=Admin123!
       - MOODLE_EMAIL=admin@example.com
+      -MOODLE_SITE_NAME=MoodleAzure
       
     volumes:
       - 'moodle_data:/bitnami/moodle'
